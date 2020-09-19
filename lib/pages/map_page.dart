@@ -33,6 +33,8 @@ class _MapPageState extends State<MapPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           BtnMyLocation(),
+          BtnFollowLocation(),
+          BtnMyRoute(),
         ],
       ),
     );
@@ -41,10 +43,13 @@ class _MapPageState extends State<MapPage> {
   Widget createMap(UserLocationState state) {
     if (!state.locationExists) return Text('Locating...');
 
+    context.bloc<MapBloc>().add(OnLocationUpdated(state.location));
+
     final cameraPosition = new CameraPosition(
       target: state.location,
       zoom: 15,
     );
+    LatLng centerPoint;
 
     return GoogleMap(
       initialCameraPosition: cameraPosition,
@@ -52,6 +57,13 @@ class _MapPageState extends State<MapPage> {
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       onMapCreated: (controller) => context.bloc<MapBloc>().initMap(controller),
+      polylines: context.bloc<MapBloc>().state.polylines.values.toSet(),
+      onCameraMove: (position) {
+        centerPoint = position.target;
+      },
+      onCameraIdle: () {
+        context.bloc<MapBloc>().add(OnMapMoved(centerPoint));
+      },
     );
   }
 }

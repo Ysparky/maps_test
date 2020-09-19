@@ -18,7 +18,6 @@ class UserLocationBloc extends Bloc<UserLocationEvent, UserLocationState> {
       desiredAccuracy: Geolocator.LocationAccuracy.high,
       distanceFilter: 10,
     ).listen((position) {
-      print(position);
       LatLng userLocation = new LatLng(position.latitude, position.longitude);
       this.add(OnChangedLocation(userLocation));
     });

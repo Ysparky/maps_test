@@ -4,3 +4,5 @@ import 'package:maps_test/bloc/Map/map_bloc.dart';
 import 'package:maps_test/bloc/UserLocation/user_location_bloc.dart';
 
 part 'btn_my_location.dart';
+part 'btn_my_route.dart';
+part 'btn_follow_location.dart';
