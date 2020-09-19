@@ -8,6 +8,7 @@ class RequestAccessPage extends StatefulWidget {
 
 class _RequestAccessPageState extends State<RequestAccessPage>
     with WidgetsBindingObserver {
+  bool onPopup = false;
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -23,7 +24,7 @@ class _RequestAccessPageState extends State<RequestAccessPage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     print('======> $state');
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && !onPopup) {
       if (await Permission.location.status.isGranted) {
         Navigator.pushReplacementNamed(context, '/splash');
       }
@@ -48,9 +49,11 @@ class _RequestAccessPageState extends State<RequestAccessPage>
               shape: StadiumBorder(),
               splashColor: Colors.transparent,
               onPressed: () async {
+                onPopup = true;
                 final permissionStatus = await Permission.location.request();
                 print(permissionStatus);
                 await handlePermissionStatus(permissionStatus);
+                onPopup = false;
                 print(permissionStatus);
               },
             )
@@ -60,10 +63,10 @@ class _RequestAccessPageState extends State<RequestAccessPage>
     );
   }
 
-  handlePermissionStatus(PermissionStatus status) {
+  Future handlePermissionStatus(PermissionStatus status) async {
     switch (status) {
       case PermissionStatus.granted:
-        Navigator.pushReplacementNamed(context, '/map');
+        Navigator.pushReplacementNamed(context, '/splash');
         break;
 
       case PermissionStatus.undetermined:
