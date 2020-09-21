@@ -26,8 +26,13 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<UserLocationBloc, UserLocationState>(
-        builder: (context, state) => createMap(state),
+      body: Stack(
+        children: [
+          BlocBuilder<UserLocationBloc, UserLocationState>(
+            builder: (context, state) => createMap(state),
+          ),
+          SearchBar(),
+        ],
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -63,6 +68,9 @@ class _MapPageState extends State<MapPage> {
       },
       onCameraIdle: () {
         context.bloc<MapBloc>().add(OnMapMoved(centerPoint));
+      },
+      onTap: (argument) {
+        print(argument.toString());
       },
     );
   }
