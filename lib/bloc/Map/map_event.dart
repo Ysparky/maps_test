@@ -15,6 +15,14 @@ class OnToggleTrackingRoute extends MapEvent {}
 
 class OnFollowLocation extends MapEvent {}
 
+class OnDrawDestinationRoute extends MapEvent {
+  final List<LatLng> coordPoints;
+  final double distance;
+  final double duration;
+
+  OnDrawDestinationRoute(this.coordPoints, this.distance, this.duration);
+}
+
 class OnMapMoved extends MapEvent {
   final LatLng centerPoint;
 

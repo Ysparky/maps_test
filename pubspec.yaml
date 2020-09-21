@@ -33,6 +33,7 @@ dependencies:
   dio: ^3.0.10
   animate_do: ^1.7.3
   flutter_bloc: ^6.0.5
+  polyline: ^1.0.2
 
 dev_dependencies:
   flutter_test:

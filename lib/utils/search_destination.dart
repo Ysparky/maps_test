@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maps_test/bloc/Map/map_bloc.dart';
 import 'package:maps_test/models/search_response.dart';
 import 'package:maps_test/models/search_result.dart';
 import 'package:maps_test/services/traffic_service.dart';
@@ -7,8 +8,9 @@ import 'package:maps_test/services/traffic_service.dart';
 class SearchDestination extends SearchDelegate<SearchResult> {
   final TrafficService _trafficService;
   final LatLng proximityPoint;
+  final List<SearchResult> searchHistory;
 
-  SearchDestination(this.proximityPoint)
+  SearchDestination(this.proximityPoint, this.searchHistory)
       : this._trafficService = new TrafficService();
 
   @override
@@ -47,13 +49,28 @@ class SearchDestination extends SearchDelegate<SearchResult> {
             title: Text('Buscar manualmente'),
             onTap: () {
               this.close(
-                  context,
-                  SearchResult(
-                    isCanceled: false,
-                    isManual: true,
-                  ));
+                context,
+                SearchResult(
+                  isCanceled: false,
+                  isManual: true,
+                ),
+              );
             },
-          )
+          ),
+          ...this
+              .searchHistory
+              .map((searchResult) => ListTile(
+                    leading: Icon(Icons.history),
+                    title: Text(searchResult.targetName),
+                    subtitle: Text(searchResult.description),
+                    onTap: () {
+                      this.close(
+                        context,
+                        searchResult,
+                      );
+                    },
+                  ))
+              .toList(),
         ],
       );
     }
@@ -89,7 +106,18 @@ class SearchDestination extends SearchDelegate<SearchResult> {
               leading: Icon(Icons.place),
               title: Text(place.textEs),
               subtitle: Text(place.placeNameEs),
-              onTap: () {},
+              onTap: () {
+                this.close(
+                  context,
+                  SearchResult(
+                    isCanceled: false,
+                    isManual: false,
+                    position: LatLng(place.center[1], place.center[0]),
+                    targetName: place.textEs,
+                    description: place.placeNameEs,
+                  ),
+                );
+              },
             );
           },
         );

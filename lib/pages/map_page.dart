@@ -56,21 +56,26 @@ class _MapPageState extends State<MapPage> {
     );
     LatLng centerPoint;
 
-    return GoogleMap(
-      initialCameraPosition: cameraPosition,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      onMapCreated: (controller) => context.bloc<MapBloc>().initMap(controller),
-      polylines: context.bloc<MapBloc>().state.polylines.values.toSet(),
-      onCameraMove: (position) {
-        centerPoint = position.target;
-      },
-      onCameraIdle: () {
-        context.bloc<MapBloc>().add(OnMapMoved(centerPoint));
-      },
-      onTap: (argument) {
-        print(argument.toString());
+    return BlocBuilder<MapBloc, MapState>(
+      builder: (context, _) {
+        return GoogleMap(
+          initialCameraPosition: cameraPosition,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          onMapCreated: (controller) =>
+              context.bloc<MapBloc>().initMap(controller),
+          polylines: context.bloc<MapBloc>().state.polylines.values.toSet(),
+          onCameraMove: (position) {
+            centerPoint = position.target;
+          },
+          onCameraIdle: () {
+            context.bloc<MapBloc>().add(OnMapMoved(centerPoint));
+          },
+          onTap: (argument) {
+            print(argument.toString());
+          },
+        );
       },
     );
   }

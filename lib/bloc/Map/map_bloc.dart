@@ -22,6 +22,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     color: Colors.black87,
   );
 
+  Polyline _destinationRoute = Polyline(
+    polylineId: PolylineId('destination_route'),
+    width: 4,
+    color: Colors.green,
+  );
+
   void initMap(GoogleMapController controller) {
     if (!state.isMapReady) {
       this._mapController = controller;
@@ -52,6 +58,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     } else if (event is OnMapMoved) {
       print(event.centerPoint);
       yield state.copyWith(centralPoint: event.centerPoint);
+    } else if (event is OnDrawDestinationRoute) {
+      yield* _onDrawDestinationRoute(event);
     }
   }
 
@@ -79,6 +87,20 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     currentPolylines['my_route'] = this._myRoute;
     yield state.copyWith(
       drawTracking: !state.drawTracking,
+      polylines: currentPolylines,
+    );
+  }
+
+  Stream<MapState> _onDrawDestinationRoute(
+      OnDrawDestinationRoute event) async* {
+    this._destinationRoute = this._destinationRoute.copyWith(
+          pointsParam: event.coordPoints,
+        );
+
+    final currentPolylines = state.polylines;
+    currentPolylines['destination_route'] = this._destinationRoute;
+
+    yield state.copyWith(
       polylines: currentPolylines,
     );
   }
